@@ -1,4 +1,4 @@
-//
+//  Model Class - provides data for app
 //  Car.swift
 //  CarCustomiser
 //

@@ -21,36 +21,22 @@ struct ContentView: View {
     @State private var fuelPackage = false
     @State private var steeringPackage = false
     @State private var remainingFunds = 1000
+    @State private var remainingTime = 30
     
     var exhaustPackageDisabled: Bool {
-        if remainingFunds < 750 && exhaustPackage == false{
-            return true
-        } else{
-            
-            return false
-        }
+        return remainingFunds < 750 && !exhaustPackage ? true : false
     }
     var tiresPackagedDisabled: Bool {
-        if remainingFunds < 750 && tiresPackage == false{
-            return true
-        } else{
-            return false
-        }
+        return remainingFunds < 750 && !tiresPackage ? true : false
     }
     var fuelPackageDisabled: Bool {
-        if remainingFunds < 500 && fuelPackage == false{
-            return true
-        } else{
-            return false
-        }
+        return remainingFunds < 500 && !fuelPackage ? true : false
     }
     var steeringPackageDisabled: Bool {
-        if remainingFunds < 500 && steeringPackage == false{
-            return true
-        } else{
-            return false
-        }
+        return remainingFunds < 500 && !steeringPackage ? true : false
     }
+    
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         let exhaustPackageBinding = Binding<Bool> (
@@ -110,6 +96,15 @@ struct ContentView: View {
             }
         )
         VStack{
+            Text("\(remainingTime)")
+                .foregroundColor(.red)
+                .bold()
+                .onReceive(timer) { _ in
+                    if self.remainingTime > 0{
+                        self.remainingTime -= 1
+                    }
+                }
+
             Form {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("\(starterCars.cars[selectedCar].displayStats())")
@@ -123,7 +118,7 @@ struct ContentView: View {
                         .disabled(exhaustPackageDisabled)
                     Toggle("Tires Package (Cost: 750)", isOn: tiresPackageBinding)
                         .disabled(tiresPackagedDisabled)
-                    Toggle("Fuel Package (Cost 500)", isOn: fuelPackageBinding)
+                    Toggle("Fuel Package (Cost: 500)", isOn: fuelPackageBinding)
                         .disabled(fuelPackageDisabled)
                     Toggle("Steering Package (Cost: 500)", isOn: steeringPackageBinding)
                         .disabled(steeringPackageDisabled)
