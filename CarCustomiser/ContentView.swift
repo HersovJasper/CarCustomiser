@@ -24,16 +24,19 @@ struct ContentView: View {
     @State private var remainingTime = 30
     
     var exhaustPackageDisabled: Bool {
-        return remainingFunds < 750 && !exhaustPackage ? true : false
+        return (remainingFunds < 750 && !exhaustPackage) || remainingTime <= 0 ? true : false
     }
     var tiresPackagedDisabled: Bool {
-        return remainingFunds < 750 && !tiresPackage ? true : false
+        return (remainingFunds < 750 && !tiresPackage) || remainingTime <= 0 ? true : false
     }
     var fuelPackageDisabled: Bool {
-        return remainingFunds < 500 && !fuelPackage ? true : false
+        return (remainingFunds < 500 && !fuelPackage) || remainingTime <= 0 ? true : false
     }
     var steeringPackageDisabled: Bool {
-        return remainingFunds < 500 && !steeringPackage ? true : false
+        return (remainingFunds < 500 && !steeringPackage) || remainingTime <= 0 ? true : false
+    }
+    var nextCarButtonDisabled: Bool {
+        return remainingTime > 0 ? false : true
     }
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -111,7 +114,7 @@ struct ContentView: View {
                     Button("Next Car", action: {
                         selectedCar += 1
                         resetDisplay()
-                    })
+                    }).disabled(nextCarButtonDisabled)
                 }
                 Section {
                     Toggle("Exhaust Package (Cost: 750)", isOn: exhaustPackageBinding)
